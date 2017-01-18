@@ -107,7 +107,7 @@ int main()
 
     for (int i=0; i<H; i++) {
         for (int j=0; j <W; j++) {
-            Vector u (j-W/2., i-H/2., -W/(2.*tan(fov/2.)));
+            Vector u (j-W/2., H-i-H/2., -W/(2.*tan(fov/2.)));
             u.normalize();
 
             double a =1;
