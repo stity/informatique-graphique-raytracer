@@ -3,8 +3,16 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    ray.cpp \
+    vector.cpp \
+    sphere.cpp \
+    scene.cpp
 
 HEADERS += \
-    CImg.h
+    ray.h \
+    vector.h \
+    sphere.h \
+    scene.h \
+    helpers.h
 
