@@ -86,6 +86,85 @@ void saveBMP (int w, int h, const unsigned char * img) {
     fclose(f);
 }
 
+class Ray {
+public:
+    Ray(Vector C, Vector u) {
+        this->C = C;
+        this->u = u;
+    }
+    Vector C;
+    Vector u;
+};
+
+class Sphere {
+public:
+    Sphere(Vector O, double R) {
+        this->O = O;
+        this->R = R;
+    }
+
+    bool intersect(const Ray& r, Vector& P, double& t, Vector& N) {
+        double a =1;
+        double b = 2.*dot(r.u,r.C-O);
+        double c = (r.C-O).squaredNorm() - R*R;
+        double delta = b*b - 4*a*c;
+        if (delta>=0) {
+
+            double t1 = (-b-sqrt(delta))/(2*a);
+            double t2 = (-b+sqrt(delta))/(2*a);
+
+            if (t1 > 0) {
+                P = r.C+ t1*r.u;
+                t = t1;
+                N = P-O;
+                N.normalize();
+                return true;
+            }
+            else if (t2 > 0) {
+                P = r.C+ t2*r.u;
+                t = t2;
+                N = P-O;
+                N.normalize();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    Vector O;
+    double R;
+
+};
+
+class Scene {
+public:
+    Scene() {
+        objects =std::vector<Sphere>();
+    }
+
+    bool intersect( const Ray& r, Vector& P, Vector& N) {
+        double mint = 1E9;
+        bool result = false;
+        for(int i = 0; i<objects.size(); i++) {
+            double t;
+            Vector N1;
+            Vector P1;
+            if (objects[i].intersect(r, P1, t, N1)) {
+                result = true;
+                if (t<mint) {
+                    mint = t;
+                    P = P1;
+                    N = N1;
+                }
+            }
+        }
+        return result;
+    }
+
+    std::vector<Sphere> objects;
+};
+
+
 int main()
 {
     int H = 1024;
@@ -99,9 +178,12 @@ int main()
     memset(img,0,sizeof(img));
 
     Vector C(0,0,25);
-    Vector O(0,0,0);
     double fov = 60*3.14/180;
-    double R = 10;
+    Sphere sphere1(Vector(-10,0,0), 12);
+    Sphere sphere2(Vector(10,0,0), 12);
+    Scene scene;
+    scene.objects.push_back(sphere1);
+    scene.objects.push_back(sphere2);
 
     Vector L(-10,20,40);
 
@@ -109,30 +191,12 @@ int main()
         for (int j=0; j <W; j++) {
             Vector u (j-W/2., H-i-H/2., -W/(2.*tan(fov/2.)));
             u.normalize();
+            Vector P;
+            Vector N;
+            Ray ray(C, u);
 
-            double a =1;
-            double b = 2.*dot(u,C-O);
-            double c = (C-O).squaredNorm() - R*R;
-            double delta = b*b - 4*a*c;
 
-            if (delta>=0) {
-
-                double t1 = (-b-sqrt(delta))/(2*a);
-                double t2 = (-b+sqrt(delta))/(2*a);
-
-                Vector P;
-                if (t1 > 0) {
-                    P = C+ t1*u;
-                }
-                else if (t2 > 0) {
-                    P = C+ t2*u;
-                }
-                else {
-                    continue;
-                }
-
-                Vector N = P-O;
-                N.normalize();
+            if (scene.intersect(ray, P, N)) {
                 Vector l = L-P;
                 double distLight2 = l.squaredNorm();
                 l.normalize();
