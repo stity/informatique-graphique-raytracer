@@ -98,9 +98,10 @@ public:
 
 class Sphere {
 public:
-    Sphere(Vector O, double R) {
+    Sphere(Vector O, double R, Vector color = Vector(1.,1.,1.)) {
         this->O = O;
         this->R = R;
+        this->color = color;
     }
 
     bool intersect(const Ray& r, Vector& P, double& t, Vector& N) {
@@ -133,6 +134,7 @@ public:
 
     Vector O;
     double R;
+    Vector color;
 
 };
 
@@ -142,7 +144,7 @@ public:
         objects =std::vector<Sphere>();
     }
 
-    bool intersect( const Ray& r, Vector& P, Vector& N) {
+    bool intersect( const Ray& r, Vector& P, Vector& N, int& id) {
         double mint = 1E9;
         bool result = false;
         for(int i = 0; i<objects.size(); i++) {
@@ -155,6 +157,7 @@ public:
                     mint = t;
                     P = P1;
                     N = N1;
+                    id = i;
                 }
             }
         }
@@ -179,11 +182,26 @@ int main()
 
     Vector C(0,0,25);
     double fov = 60*3.14/180;
-    Sphere sphere1(Vector(-10,0,0), 12);
-    Sphere sphere2(Vector(10,0,0), 12);
+    Vector red(0,0,1.);
+    Vector blue(1., 0, 0);
+    Vector green(0, 1., 0);
+    Vector yellow(0,1.,1.);
+    Vector white(1.,1.,1.);
+    Sphere sphere1(Vector(-5,0,0), 6, white);
+    Sphere sphere2(Vector( 5,0,0), 6, white);
+    Sphere mur1(Vector(0,-1000,0), 990, blue);
+    Sphere mur2(Vector(0,0,-1000), 990, green);
+    Sphere mur3(Vector(0,1000,0), 990, red);
+    Sphere mur4(Vector(1000,0,0), 990, yellow);
+    Sphere mur5(Vector(-1000,0,0), 990, yellow);
     Scene scene;
     scene.objects.push_back(sphere1);
     scene.objects.push_back(sphere2);
+    scene.objects.push_back(mur1);
+    scene.objects.push_back(mur2);
+    scene.objects.push_back(mur3);
+    scene.objects.push_back(mur4);
+    scene.objects.push_back(mur5);
 
     Vector L(-10,20,40);
 
@@ -194,16 +212,17 @@ int main()
             Vector P;
             Vector N;
             Ray ray(C, u);
+            int sphereId;
 
 
-            if (scene.intersect(ray, P, N)) {
+            if (scene.intersect(ray, P, N, sphereId)) {
                 Vector l = L-P;
                 double distLight2 = l.squaredNorm();
                 l.normalize();
-                double intensity = 1000*abs(dot(N,l))/distLight2;
-                img[(i*W+j)*3]=std::min(225., 255*intensity);
-                img[(i*W+j)*3+1]=std::min(255., 255*intensity);
-                img[(i*W+j)*3+2]=std::min(255., 255*intensity);
+                Vector intensity = (1500*abs(dot(N,l))/distLight2)*scene.objects[sphereId].color;
+                img[(i*W+j)*3]=std::min(225., 255*intensity[0]);
+                img[(i*W+j)*3+1]=std::min(255., 255*intensity[1]);
+                img[(i*W+j)*3+2]=std::min(255., 255*intensity[2]);
             }
         }
     }
