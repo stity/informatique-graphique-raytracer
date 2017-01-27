@@ -7,12 +7,14 @@ SOURCES += main.cpp \
     ray.cpp \
     vector.cpp \
     sphere.cpp \
-    scene.cpp
+    scene.cpp \
+    material.cpp
 
 HEADERS += \
     ray.h \
     vector.h \
     sphere.h \
     scene.h \
-    helpers.h
+    helpers.h \
+    material.h
 

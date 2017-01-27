@@ -30,7 +30,7 @@ Vector Vector::reflect(const Vector& N) const {
 }
 
 Vector Vector::refract(const Vector& N, double n1, double n2, bool &is_refracted) const {
-    double cosThetai = dot(-N);
+    double cosThetai = dot(N);
     //double D = 1-sqrt(n1/n2)*(1-sqrt(cosThetai));
     double D = 1-pow((n1/n2),2)*(1-pow(cosThetai,2));
     Vector Rt =((*this)-cosThetai*N)*(n1/n2);

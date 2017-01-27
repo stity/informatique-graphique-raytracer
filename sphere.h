@@ -1,22 +1,22 @@
 #ifndef SPHERE_H
 #define SPHERE_H
+
 #include "vector.h"
 #include "ray.h"
+#include "material.h"
+#include "sphere.h"
+#include "helpers.h"
 
 class Sphere {
 public:
-    Sphere(Vector O, double R, Vector color = Vector(1.,1.,1.), bool isDiffuse = true, bool isSpecular = false, bool isTransparent = false);
+    Sphere(Vector O, double R, Vector color, Vector opticProperty);
 
     bool intersect(const Ray& r, Vector& P, double& t, Vector& N);
 
     Vector O;
     double R;
-    Vector color;
     Vector L;
-    bool isDiffuse;
-    bool isSpecular;
-    bool isTransparent;
-
+    Material material;
 };
 
 #endif // SPHERE_H

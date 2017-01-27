@@ -30,7 +30,7 @@ Vector Scene::getColor(const Ray &ray, int recursion) {
     int sphereId;
 
     if (intersect(ray, P, N, sphereId)) {
-        if(objects[sphereId].isDiffuse){
+        if(objects[sphereId].material.isDiffuse()){
             Vector l = L-P;
             double distLight2 = l.squaredNorm();
             l.normalize();
@@ -42,17 +42,17 @@ Vector Scene::getColor(const Ray &ray, int recursion) {
             direction.normalize();
             if(intersect(Ray(P+0.001*N, direction), Pp, Np, idp)){
                 if((Pp-P).squaredNorm() < distLight2){
-                    shadow_coeff = 0.6;
+                    shadow_coeff = .6;
                 }
             }
 
-            return shadow_coeff * (1500.*dot(N,l)/distLight2)*objects[sphereId].color;
-        } if(objects[sphereId].isSpecular) {
+            return shadow_coeff * (1500.*dot(N,l)/distLight2)*objects[sphereId].material.color;
+        } if(objects[sphereId].material.isSpecular()) {
             if(recursion > 0){
                 Vector refl = ray.u.reflect(N);
-                return getColor(Ray(P+0.01*N, refl), recursion-1)*this->objects[sphereId].color;
+                return getColor(Ray(P+0.01*N, refl), recursion-1)*this->objects[sphereId].material.color;
             }
-        } if(objects[sphereId].isTransparent) {
+        } if(objects[sphereId].material.isTransparent()) {
             if(recursion >0){
                 bool is_refracted;
                 double n1=1;

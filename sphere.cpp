@@ -1,14 +1,9 @@
 #include "sphere.h"
-#include <cmath>
-#include "helpers.h"
 
-Sphere::Sphere(Vector O, double R, Vector color, bool isDiffuse, bool isSpecular, bool isTransparent) {
+Sphere::Sphere(Vector O, double R, Vector color, Vector opticProperty) {
     this->O = O;
     this->R = R;
-    this->color = color;
-    this->isDiffuse = isDiffuse;
-    this->isSpecular = isSpecular;
-    this->isTransparent = isTransparent;
+    this->material = Material(color, opticProperty);
 }
 
 bool Sphere::intersect(const Ray& r, Vector& P, double& t, Vector& N) {
