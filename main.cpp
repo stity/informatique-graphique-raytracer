@@ -13,6 +13,9 @@ using namespace std;
 
 int main()
 {
+
+    std::cout << "integration :  " << integrate(&test_function) << std::endl;
+
     // Dimensions de l'image finale
     int H = 1024;
     int W = 1024;
@@ -89,5 +92,6 @@ int main()
 
     // Enregistrement de l'image
     saveBMP(W, H, img);
+
     return 0;
 }

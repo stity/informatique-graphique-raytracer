@@ -48,26 +48,32 @@ inline double pdf (double x, double mu, double sigma) {
     return exp(-(x-mu)*(x-mu)/(2*sigma*sigma))/(sigma*sqrt(2*M_PI));
 }
 
-inline double integrate () {
+inline double test_function (double x, double y, double z) {
+    return pow(cos(x)*cos(y)*cos(z),20);
+}
+
+inline double integrate (double (*f) (double, double, double)) {
     double sum = 0;
-    double u,v,x,y;
-    int N = 1000;
+    double u,v,x,y,z;
+    int N = 10000;
+    int add = 0;
     double sigma = 0.25;
     double mu = 0;
     srand(time(NULL));
-    for(int i = 0; i < N/2; i++) {
+    for(int i = 0; i < N; i++) {
         u = (double)rand() / (double)RAND_MAX;
         v = (double)rand() / (double)RAND_MAX;
         x = sqrt(-2*log(u))*cos(2*M_PI*v)*sigma+mu;
         y = sqrt(-2*log(u))*sin(2*M_PI*v)*sigma+mu;
-        if (x > -M_PI/2 && x < M_PI/2) {
-            sum += pow(cos(x),20)/pdf(x, mu, sigma);
-        }
-        if (y > -M_PI/2 && y < M_PI/2) {
-            sum += pow(cos(y),20)/pdf(y, mu, sigma);
+        u = (double)rand() / (double)RAND_MAX;
+        v = (double)rand() / (double)RAND_MAX;
+        z = sqrt(-2*log(u))*cos(2*M_PI*v)*sigma+mu;
+        if (x > -M_PI/2 && x < M_PI/2 && y > -M_PI/2 && y < M_PI/2 && z > -M_PI/2 && z < M_PI/2) {
+            sum += f(x,z,y)/(pdf(x, mu, sigma)*pdf(y, mu, sigma)*pdf(z, mu, sigma));
+            add++;
         }
     }
-    sum = sum / N;
+    sum = sum / add;
     return sum;
 }
 
