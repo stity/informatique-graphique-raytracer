@@ -1,4 +1,7 @@
 #include "scene.h"
+#ifndef M_PI
+#define M_PI (3.14159265358979323846)
+#endif
 
 Scene::Scene()
 {
@@ -52,7 +55,7 @@ Vector Scene::getColor(const Ray &ray, int recursion) {
                 Vector random_direction;
                 random_direction.random_cos(N);
                 Vector indirect = getColor(Ray(P+0.001*N, random_direction), recursion-1);
-                finalColor = finalColor + objects[sphereId].material.diffusionCoefficient*objects[sphereId].material.color*indirect;
+                finalColor = finalColor + objects[sphereId].material.diffusionCoefficient*objects[sphereId].material.color*indirect*(1./M_PI);
             }
             return finalColor;
         } if(objects[sphereId].material.isSpecular()) {

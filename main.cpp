@@ -49,7 +49,7 @@ int main()
 
     // Définition des éléments à observer
     Sphere sphere1(Vector(0,0,10), 10, white, transparent);
-    Sphere sphere2(Vector(0,0,20), 10, white, diffuse, 0.7);
+    Sphere sphere2(Vector(0,0,20), 10, white, diffuse, 1.0);
     Sphere sphere3(Vector(-15,0,20), 3, white, mirror);
 
     // Définition des "murs"
@@ -87,7 +87,7 @@ int main()
             Vector sum_intensities;
             for (int k = 0; k<sampleNumber; k++) {
                 // Calcul du vecteur d'intensité
-                Vector intensity = scene.getColor(Ray(C, u), 3);
+                Vector intensity = scene.getColor(Ray(C, u), 5);
                 sum_intensities = sum_intensities + intensity;
             }
             sum_intensities = sum_intensities*(1./sampleNumber);

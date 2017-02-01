@@ -2,6 +2,13 @@
 #include <stdlib.h>
 #include <cstring>
 #include <cmath>
+#include <random>
+#ifndef M_PI
+#define M_PI (3.14159265358979323846)
+#endif
+std::default_random_engine engine;
+std::uniform_real_distribution<double> distrib(0,1);
+
 
 Vector::Vector(double x, double y, double z) {
     xyz[0] = x;
@@ -57,8 +64,8 @@ double Vector::dot(const Vector& b) const {
 }
 
 void Vector::random_cos(const Vector& N) {
-    double u = rand()/(double)RAND_MAX;
-    double v = rand()/(double)RAND_MAX;
+    double u = distrib(engine);
+    double v = distrib(engine);
     double x = cos(2*M_PI*u)*sqrt(1-v);
     double y = sin(2*M_PI*u)*sqrt(1-v);
     double z = sqrt(v);
