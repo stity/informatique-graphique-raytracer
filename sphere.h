@@ -9,7 +9,7 @@
 
 class Sphere {
 public:
-    Sphere(Vector O, double R, Vector color, Vector opticProperty);
+    Sphere(Vector O, double R, Vector color, Vector opticProperty, double diffusionCoeff=1);
 
     bool intersect(const Ray& r, Vector& P, double& t, Vector& N);
 

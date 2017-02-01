@@ -55,3 +55,34 @@ void Vector::normalize() {
 double Vector::dot(const Vector& b) const {
     return xyz[0]*b[0]+xyz[1]*b[1]+xyz[2]*b[2];
 }
+
+void Vector::random_cos(const Vector& N) {
+    double u = rand()/(double)RAND_MAX;
+    double v = rand()/(double)RAND_MAX;
+    double x = cos(2*M_PI*u)*sqrt(1-v);
+    double y = sin(2*M_PI*u)*sqrt(1-v);
+    double z = sqrt(v);
+
+    Vector tangent1;
+    if (N[0] != 0 || N[1] != 0) {
+        tangent1 = Vector(N[1],-N[0],0);
+    }
+    else {
+        tangent1 = Vector(0,N[2],-N[1]);
+    }
+    tangent1.normalize();
+    Vector tangent2 = N.cross(tangent1);
+    Vector result;
+    result = x*tangent1+y*tangent2+z*N;
+    this->xyz[0] = result[0];
+    this->xyz[1] = result[1];
+    this->xyz[2] = result[2];
+}
+
+Vector Vector::cross(const Vector& b) const {
+    Vector result;
+    result.xyz[0] = this->xyz[1]*b[2] - this->xyz[2]*b[1];
+    result.xyz[1] = this->xyz[2]*b[0] - this->xyz[0]*b[2];
+    result.xyz[2] = this->xyz[0]*b[1] - this->xyz[1]*b[0];
+    return result;
+}

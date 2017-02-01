@@ -19,6 +19,8 @@ public:
     double squaredNorm();
     void normalize();
     double dot(const Vector& b) const;
+    void random_cos(const Vector& N);
+    Vector cross(const Vector& b) const;
 
 };
 

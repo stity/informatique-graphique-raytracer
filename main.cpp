@@ -14,7 +14,6 @@ using namespace std;
 int main()
 {
 
-    std::cout << "integration :  " << integrate(&test_function) << std::endl;
 
     // Dimensions de l'image finale
     int H = 1024;
@@ -50,7 +49,7 @@ int main()
 
     // Définition des éléments à observer
     Sphere sphere1(Vector(0,0,10), 10, white, transparent);
-    Sphere sphere2(Vector(20,10,-20), 3, white, diffuse);
+    Sphere sphere2(Vector(0,0,20), 10, white, diffuse, 0.7);
     Sphere sphere3(Vector(-15,0,20), 3, white, mirror);
 
     // Définition des "murs"
@@ -64,10 +63,10 @@ int main()
     // Création de la scène en ajoutant les objets à afficher
     Scene scene;
     //scene.L = Vector(-10,20,40); // Lumière de la scène
-    scene.L = Vector(0,10,-20);
-    scene.objects.push_back(sphere1);
+    scene.L = Vector(10,10,40);
+    //scene.objects.push_back(sphere1);
     scene.objects.push_back(sphere2);
-    scene.objects.push_back(sphere3);
+    //scene.objects.push_back(sphere3);
     scene.objects.push_back(mur1);
     scene.objects.push_back(mur2);
     scene.objects.push_back(mur3);
@@ -75,18 +74,28 @@ int main()
     scene.objects.push_back(mur5);
     scene.objects.push_back(mur6);
 
+    int sampleNumber = 100;
+    int linesDone = 0;
+
+#pragma omp parallel for
     for (int i=0; i<H; i++) {
+        std::cout << "line " << linesDone++ << std::endl;
         for (int j=0; j <W; j++) {
             // Direction associée au pixel
             Vector u (j-W/2., H-i-H/2., -W/(2.*tan(fov/2.)));
             u.normalize();
+            Vector sum_intensities;
+            for (int k = 0; k<sampleNumber; k++) {
+                // Calcul du vecteur d'intensité
+                Vector intensity = scene.getColor(Ray(C, u), 3);
+                sum_intensities = sum_intensities + intensity;
+            }
+            sum_intensities = sum_intensities*(1./sampleNumber);
 
-            // Calcul du vecteur d'intensité
-            Vector intensity = scene.getColor(Ray(C, u), 10);
 
-            img[(i*W+j)*3]=255*std::min(pow(intensity[0], 1./2.2),1.);
-            img[(i*W+j)*3+1]=255*std::min(pow(intensity[1], 1./2.2),1.);
-            img[(i*W+j)*3+2]=255*std::min(pow(intensity[2], 1./2.2),1.);
+            img[(i*W+j)*3]=255*std::min(pow(sum_intensities[0], 1./2.2),1.);
+            img[(i*W+j)*3+1]=255*std::min(pow(sum_intensities[1], 1./2.2),1.);
+            img[(i*W+j)*3+2]=255*std::min(pow(sum_intensities[2], 1./2.2),1.);
         }
     }
 

@@ -18,3 +18,8 @@ HEADERS += \
     helpers.h \
     material.h
 
+QMAKE_CFLAGS_RELEASE += -fopenmp
+QMAKE_CFLAGS_DEBUG += -fopenmp
+QMAKE_CXXFLAGS += -fopenmp
+QMAKE_LFLAGS +=  -fopenmp
+

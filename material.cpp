@@ -1,9 +1,10 @@
 #include "material.h"
 
-Material::Material(Vector color, Vector caracteristics)
+Material::Material(Vector color, Vector caracteristics, double diffusionCoefficient)
 {
     this->color = color;
     this->caracteristics = caracteristics;
+    this->diffusionCoefficient = diffusionCoefficient;
 }
 
 bool Material::isDiffuse() {

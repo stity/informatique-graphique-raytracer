@@ -1,9 +1,9 @@
 #include "sphere.h"
 
-Sphere::Sphere(Vector O, double R, Vector color, Vector opticProperty) {
+Sphere::Sphere(Vector O, double R, Vector color, Vector opticProperty, double diffusionCoeff) {
     this->O = O;
     this->R = R;
-    this->material = Material(color, opticProperty);
+    this->material = Material(color, opticProperty, diffusionCoeff);
 }
 
 bool Sphere::intersect(const Ray& r, Vector& P, double& t, Vector& N) {

@@ -28,6 +28,7 @@ bool Scene::intersect(const Ray& r, Vector& P, Vector& N, int& id) {
 Vector Scene::getColor(const Ray &ray, int recursion) {
     Vector N, P;
     int sphereId;
+    Vector finalColor;
 
     if (intersect(ray, P, N, sphereId)) {
         if(objects[sphereId].material.isDiffuse()){
@@ -46,7 +47,14 @@ Vector Scene::getColor(const Ray &ray, int recursion) {
                 }
             }
 
-            return shadow_coeff * (1500.*dot(N,l)/distLight2)*objects[sphereId].material.color;
+            finalColor = shadow_coeff * (1500.*dot(N,l)/distLight2)*objects[sphereId].material.color;
+            if (recursion>0) {
+                Vector random_direction;
+                random_direction.random_cos(N);
+                Vector indirect = getColor(Ray(P+0.001*N, random_direction), recursion-1);
+                finalColor = finalColor + objects[sphereId].material.diffusionCoefficient*objects[sphereId].material.color*indirect;
+            }
+            return finalColor;
         } if(objects[sphereId].material.isSpecular()) {
             if(recursion > 0){
                 Vector refl = ray.u.reflect(N);
