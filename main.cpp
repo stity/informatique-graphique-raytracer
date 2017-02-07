@@ -13,6 +13,7 @@
 using namespace std;
 
 
+
 int main(int argc, char *argv[])
 {
     int totalPartition = 1;
@@ -89,7 +90,7 @@ int main(int argc, char *argv[])
 
 #pragma omp parallel for
     for (int i=H*(partition-1)/totalPartition; i<H*partition/totalPartition; i++) {
-        std::cout << "line " << linesDone++ << std::endl;
+        printProgress(100*linesDone++*totalPartition/H, linesDone);
         for (int j=0; j <W; j++) {
 
             Vector sum_intensities;
