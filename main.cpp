@@ -63,8 +63,10 @@ int main()
     // Création de la scène en ajoutant les objets à afficher
     Scene scene;
     //scene.L = Vector(-10,20,40); // Lumière de la scène
-    scene.L = Vector(10,10,40);
+    //scene.L = Vector(10,10,40);
+    Sphere luxSphere(Vector(10,10,40), 3, white, transparent, 1);
     //scene.objects.push_back(sphere1);
+    scene.objects.push_back(luxSphere);
     scene.objects.push_back(sphere2);
     //scene.objects.push_back(sphere3);
     scene.objects.push_back(mur1);
