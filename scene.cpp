@@ -72,7 +72,7 @@ Vector Scene::getColor(const Ray &ray, int recursion) {
                 }
             }
             double pdf = dot(xP, randomvect);
-            finalColor = shadow_coeff*std::max(0., dot(N,omega_i)/distLight2)*dot(Nprime, -omega_i)/pdf*objects[sphereId].material.color*objects[0].material.emissivity;
+            finalColor = finalColor+ shadow_coeff*std::max(0., dot(N,omega_i)/distLight2)*dot(Nprime, -omega_i)/pdf*objects[sphereId].material.color*objects[0].material.emissivity;
 
             if (recursion>0) {
                 Vector random_direction;
