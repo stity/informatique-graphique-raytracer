@@ -18,6 +18,7 @@ public:
     double operator[](int i) const ;
     double squaredNorm();
     void normalize();
+    Vector getNormalized();
     double dot(const Vector& b) const;
     void random_cos(const Vector& N);
     Vector cross(const Vector& b) const;

@@ -34,6 +34,9 @@ Vector Scene::getColor(const Ray &ray, int recursion) {
     Vector finalColor;
 
     if (intersect(ray, P, N, sphereId)) {
+        if (objects[sphereId].material.emissivity > 1) {
+            finalColor = 2*abs(dot(N,(ray.C-P).getNormalized()))*objects[sphereId].material.emissivity*objects[sphereId].material.color;
+        }
         if(objects[sphereId].material.isDiffuse()){
             /*
             Vector l = L-P;
@@ -53,11 +56,29 @@ Vector Scene::getColor(const Ray &ray, int recursion) {
 
             finalColor = shadow_coeff * (1500.*dot(N,l)/distLight2)*objects[sphereId].material.color;
             */
+            Vector xP = (P-objects[0].O).getNormalized();
+            Vector randomvect;
+            randomvect.random_cos(xP);
+            Vector sampledLightSource = randomvect*objects[0].R + objects[0].O;
+            double distLight2 = (sampledLightSource-P).squaredNorm();
+            Vector omega_i=(sampledLightSource-P).getNormalized();
+            double shadow_coeff = 1;
+            Vector Pprime, Nprime;
+            int idprime;
+
+            if (intersect(Ray(P+0.001*N, omega_i), Pprime, Nprime, idprime)) {
+                if ((Pprime-P).squaredNorm() < distLight2) {
+                    shadow_coeff = 0;
+                }
+            }
+            double pdf = dot(xP, randomvect);
+            finalColor = shadow_coeff*std::max(0., dot(N,omega_i)/distLight2)*dot(Nprime, -omega_i)/pdf*objects[sphereId].material.color*objects[0].material.emissivity;
+
             if (recursion>0) {
                 Vector random_direction;
                 random_direction.random_cos(N);
                 Vector indirect = getColor(Ray(P+0.001*N, random_direction), recursion-1);
-                finalColor = finalColor + objects[sphereId].material.diffusionCoefficient*objects[sphereId].material.color*indirect*(1./M_PI)*objects[sphereId].material.emissivity;
+                finalColor = finalColor + objects[sphereId].material.diffusionCoefficient*objects[sphereId].material.color*indirect*(1./M_PI);
             }
             return finalColor;
         } if(objects[sphereId].material.isSpecular()) {

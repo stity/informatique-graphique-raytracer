@@ -58,6 +58,11 @@ void Vector::normalize() {
     xyz[1] = xyz[1]/norm;
     xyz[2] = xyz[2]/norm;
 }
+Vector Vector::getNormalized() {
+    double norm = sqrt(squaredNorm());
+    Vector result(xyz[0]/norm, xyz[1]/norm, xyz[2]/norm );
+    return result;
+}
 
 double Vector::dot(const Vector& b) const {
     return xyz[0]*b[0]+xyz[1]*b[1]+xyz[2]*b[2];
@@ -70,14 +75,9 @@ void Vector::random_cos(const Vector& N) {
     double y = sin(2*M_PI*u)*sqrt(1-v);
     double z = sqrt(v);
 
-    Vector tangent1;
-    if (N[0] != 0 || N[1] != 0) {
-        tangent1 = Vector(N[1],-N[0],0);
-    }
-    else {
-        tangent1 = Vector(0,N[2],-N[1]);
-    }
-    tangent1.normalize();
+    Vector randomvect(-0.5+distrib(engine),-0.5+distrib(engine),-0.5+distrib(engine));
+    randomvect.normalize();
+    Vector tangent1 = N.cross(randomvect);
     Vector tangent2 = N.cross(tangent1);
     Vector result;
     result = x*tangent1+y*tangent2+z*N;

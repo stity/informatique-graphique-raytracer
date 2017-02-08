@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     Scene scene;
     //scene.L = Vector(-10,20,40); // Lumière de la scène
     //scene.L = Vector(10,10,40);
-    Sphere luxSphere(Vector(10,10,40), 3, white, transparent, 1);
+    Sphere luxSphere(Vector(10,10,40), 3, white, diffuse,1.0, 750);
     //scene.objects.push_back(sphere1);
     scene.objects.push_back(luxSphere);
     scene.objects.push_back(sphere2);
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     scene.objects.push_back(mur5);
     scene.objects.push_back(mur6);
 
-    int sampleNumber = 100;
+    int sampleNumber = 50;
     int linesDone = 0;
 
 #pragma omp parallel for
