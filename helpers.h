@@ -2,10 +2,16 @@
 #define HELPERS_H
 #include "vector.h"
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include <ctime>
 #include <stdlib.h>
 #include <iostream>
+#include <sstream>
+
+#ifndef M_PI
+#define M_PI (3.14159265358979323846)
+#endif
 
 #ifndef M_PI
 #define M_PI (3.14159265358979323846)
@@ -48,37 +54,28 @@ inline void saveBMP (int w, int h, const unsigned char * img) {
     fclose(f);
 }
 
-inline double pdf (double x, double mu, double sigma) {
-    return exp(-(x-mu)*(x-mu)/(2*sigma*sigma))/(sigma*sqrt(2*M_PI));
-}
 
-inline double test_function (double x, double y, double z) {
-    return pow(cos(x)*cos(y)*cos(z),20);
-}
-
-inline double integrate (double (*f) (double, double, double)) {
-    double sum = 0;
-    double u,v,x,y,z;
-    int N = 10000;
-    int add = 0;
-    double sigma = 0.25;
-    double mu = 0;
-    srand(time(NULL));
-    for(int i = 0; i < N; i++) {
-        u = (double)rand() / (double)RAND_MAX;
-        v = (double)rand() / (double)RAND_MAX;
-        x = sqrt(-2*log(u))*cos(2*M_PI*v)*sigma+mu;
-        y = sqrt(-2*log(u))*sin(2*M_PI*v)*sigma+mu;
-        u = (double)rand() / (double)RAND_MAX;
-        v = (double)rand() / (double)RAND_MAX;
-        z = sqrt(-2*log(u))*cos(2*M_PI*v)*sigma+mu;
-        if (x > -M_PI/2 && x < M_PI/2 && y > -M_PI/2 && y < M_PI/2 && z > -M_PI/2 && z < M_PI/2) {
-            sum += f(x,z,y)/(pdf(x, mu, sigma)*pdf(y, mu, sigma)*pdf(z, mu, sigma));
-            add++;
-        }
+inline void printProgress(int x, int lines=0){
+    std::stringstream msg;
+    std::string s;
+    s="[";
+    for (int i=1;i<=(100/2);i++){
+        if (i<=(x/2) || x==100)
+            s+="=";
+        else if (i==(x/2))
+            s+=">";
+        else
+            s+=" ";
     }
-    sum = sum / add;
-    return sum;
+
+    s+="]";
+    msg << "\r" << std::setw(-40) << s << " " << x << "% completed.";
+    if (lines > 0) {
+        msg << "(" << lines << ")";
+    }
+    msg << std::flush;
+    std::cout << msg.str();
 }
+
 
 #endif // HELPERS_H

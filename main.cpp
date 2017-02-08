@@ -8,11 +8,22 @@
 #include "scene.h"
 #include "material.h"
 #include "helpers.h"
+#include <random>
 
 using namespace std;
 
-int main()
+
+
+int main(int argc, char *argv[])
 {
+    int totalPartition = 1;
+    int partition = 1;
+    if (argc >= 3) {
+        partition = std::stoi(argv[1]);
+        totalPartition = std::stoi(argv[2]);
+    }
+    std::default_random_engine engine;
+    std::uniform_real_distribution<double> distrib(0,1);
 
 
     // Dimensions de l'image finale
@@ -80,14 +91,17 @@ int main()
     int linesDone = 0;
 
 #pragma omp parallel for
-    for (int i=0; i<H; i++) {
-        std::cout << "line " << linesDone++ << std::endl;
+    for (int i=H*(partition-1)/totalPartition; i<H*partition/totalPartition; i++) {
+        printProgress(100*linesDone++*totalPartition/H, linesDone);
         for (int j=0; j <W; j++) {
-            // Direction associée au pixel
-            Vector u (j-W/2., H-i-H/2., -W/(2.*tan(fov/2.)));
-            u.normalize();
+
             Vector sum_intensities;
             for (int k = 0; k<sampleNumber; k++) {
+                double r1 = distrib(engine)-0.5;
+                double r2 = distrib(engine)-0.5;
+                // Direction associée au pixel
+                Vector u (j+r1-W/2., H-i+r2-H/2., -W/(2.*tan(fov/2.)));
+                u.normalize();
                 // Calcul du vecteur d'intensité
                 Vector intensity = scene.getColor(Ray(C, u), 5);
                 sum_intensities = sum_intensities + intensity;
