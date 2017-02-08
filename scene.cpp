@@ -28,7 +28,7 @@ bool Scene::intersect(const Ray& r, Vector& P, Vector& N, int& id) {
     return result;
 }
 
-Vector Scene::getColor(const Ray &ray, int recursion) {
+Vector Scene::getColor(const Ray &ray, int recursion, int recursionMax) {
     Vector N, P;
     int sphereId;
     Vector finalColor;
@@ -36,6 +36,9 @@ Vector Scene::getColor(const Ray &ray, int recursion) {
     if (intersect(ray, P, N, sphereId)) {
         if (objects[sphereId].material.emissivity > 1) {
             finalColor = objects[sphereId].material.emissivity*objects[sphereId].material.color;
+            if (recursion == recursionMax) {
+                return finalColor;
+            }
         }
         if(objects[sphereId].material.isDiffuse()){
             /*
@@ -72,19 +75,19 @@ Vector Scene::getColor(const Ray &ray, int recursion) {
                 }
             }
             double pdf = dot(xP, randomvect);
-            finalColor = finalColor+ shadow_coeff*std::max(0., dot(N,omega_i)/distLight2)*dot(Nprime, -omega_i)/pdf*objects[sphereId].material.color*objects[0].material.emissivity;
+            finalColor = shadow_coeff*std::max(0., dot(N,omega_i)/distLight2)*dot(Nprime, -omega_i)/pdf*objects[sphereId].material.color*objects[0].material.emissivity;
 
             if (recursion>0) {
                 Vector random_direction;
                 random_direction.random_cos(N);
-                Vector indirect = getColor(Ray(P+0.001*N, random_direction), recursion-1);
+                Vector indirect = getColor(Ray(P+0.001*N, random_direction), recursion-1, recursionMax);
                 finalColor = finalColor + objects[sphereId].material.diffusionCoefficient*objects[sphereId].material.color*indirect*(1./M_PI);
             }
             return finalColor;
         } if(objects[sphereId].material.isSpecular()) {
             if(recursion > 0){
                 Vector refl = ray.u.reflect(N);
-                return getColor(Ray(P+0.01*N, refl), recursion-1)*this->objects[sphereId].material.color;
+                return getColor(Ray(P+0.01*N, refl), recursion-1, recursionMax)*this->objects[sphereId].material.color;
             }
         } if(objects[sphereId].material.isTransparent()) {
             if(recursion >0){
@@ -99,7 +102,7 @@ Vector Scene::getColor(const Ray &ray, int recursion) {
                 }
                 Vector refr = ray.u.refract(normale, n1, n2, is_refracted);
                 if(is_refracted){
-                    return getColor(Ray(P+0.001*refr, refr), recursion-1);
+                    return getColor(Ray(P+0.001*refr, refr), recursion-1, recursionMax);
                 }
             } else {
                 return Vector(0.,0.,0.);
@@ -107,7 +110,7 @@ Vector Scene::getColor(const Ray &ray, int recursion) {
         } else {
             if(recursion >0){
                 Vector refl = ray.u-2.*dot(ray.u, N)*N;
-                return getColor(Ray(P+0.001*refl, refl), recursion-1);
+                return getColor(Ray(P+0.001*refl, refl), recursion-1, recursionMax);
             } else {
                 return Vector(0.,0.,0.);
             }

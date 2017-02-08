@@ -10,7 +10,7 @@ public:
     Scene();
 
     bool intersect(const Ray& r, Vector& P, Vector& N, int& id);
-    Vector getColor(const Ray &ray, int recursion);
+    Vector getColor(const Ray &ray, int recursion, int recursionMax);
 
     std::vector<Sphere> objects;
     Vector L;

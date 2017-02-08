@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     scene.objects.push_back(mur5);
     scene.objects.push_back(mur6);
 
-    int sampleNumber = 50;
+    int sampleNumber = 10;
     int linesDone = 0;
 
 #pragma omp parallel for
@@ -102,8 +102,22 @@ int main(int argc, char *argv[])
                 // Direction associée au pixel
                 Vector u (j+r1-W/2., H-i+r2-H/2., -W/(2.*tan(fov/2.)));
                 u.normalize();
-                // Calcul du vecteur d'intensité
-                Vector intensity = scene.getColor(Ray(C, u), 5);
+
+                //profondeur de champ
+                Vector Pfocal = C + 55*u;
+                double r1_bis = distrib(engine);
+                double r2_bis = distrib(engine);
+                double x_bis = sqrt(-2*log(r1_bis))*cos(2.*M_PI*r2_bis)*0.5;
+                double y_bis = sqrt(-2*log(r1_bis))*sin(2.*M_PI*r2_bis)*0.5;
+
+                Vector ubis = Pfocal - (C+Vector(x_bis, y_bis,0));
+                ubis.normalize();
+
+
+                // Calcul du vecteur d'intensité avec profondeur de champ
+                //Vector intensity = scene.getColor(Ray(C+Vector(x_bis,y_bis,0), ubis), 5, 5);
+                //sans profondeur de champ
+                Vector intensity = scene.getColor(Ray(C, u), 5, 5);
                 sum_intensities = sum_intensities + intensity;
             }
             sum_intensities = sum_intensities*(1./sampleNumber);
