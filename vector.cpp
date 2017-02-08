@@ -75,9 +75,14 @@ void Vector::random_cos(const Vector& N) {
     double y = sin(2*M_PI*u)*sqrt(1-v);
     double z = sqrt(v);
 
-    Vector randomvect(-0.5+distrib(engine),-0.5+distrib(engine),-0.5+distrib(engine));
-    randomvect.normalize();
-    Vector tangent1 = N.cross(randomvect);
+    Vector tangent1;
+    if (N[0] != 0 || N[1] != 0) {
+        tangent1 = Vector(N[1],-N[0],0);
+    }
+    else {
+        tangent1 = Vector(0,N[2],-N[1]);
+    }
+    tangent1.normalize();
     Vector tangent2 = N.cross(tangent1);
     Vector result;
     result = x*tangent1+y*tangent2+z*N;
