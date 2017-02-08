@@ -76,11 +76,19 @@ void Vector::random_cos(const Vector& N) {
     double z = sqrt(v);
 
     Vector tangent1;
-    if (N[0] != 0 || N[1] != 0) {
-        tangent1 = Vector(N[1],-N[0],0);
+    double abs0 = abs((double) N[0]);
+    double abs1 = abs((double) N[1]);
+    double abs2 = abs((double) N[20]);
+    double minComp = std::min(abs0,abs1);
+    minComp = std::min(minComp, abs2);
+    if (N[0] <= minComp) {
+        tangent1 = Vector(0,N[2],-N[1]);
+    }
+    else if (N[1] <= minComp) {
+        tangent1 = Vector(N[2],0,-N[0]);
     }
     else {
-        tangent1 = Vector(0,N[2],-N[1]);
+        tangent1 = Vector(N[1],-N[0],0);
     }
     tangent1.normalize();
     Vector tangent2 = N.cross(tangent1);

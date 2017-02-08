@@ -35,7 +35,7 @@ Vector Scene::getColor(const Ray &ray, int recursion) {
 
     if (intersect(ray, P, N, sphereId)) {
         if (objects[sphereId].material.emissivity > 1) {
-            finalColor = 2*abs(dot(N,(ray.C-P).getNormalized()))*objects[sphereId].material.emissivity*objects[sphereId].material.color;
+            finalColor = objects[sphereId].material.emissivity*objects[sphereId].material.color;
         }
         if(objects[sphereId].material.isDiffuse()){
             /*
@@ -67,7 +67,7 @@ Vector Scene::getColor(const Ray &ray, int recursion) {
             int idprime;
 
             if (intersect(Ray(P+0.001*N, omega_i), Pprime, Nprime, idprime)) {
-                if ((Pprime-P).squaredNorm() < distLight2) {
+                if (idprime != 0) {
                     shadow_coeff = 0;
                 }
             }
