@@ -2,6 +2,7 @@
 #define SCENE_H
 #include "sphere.h"
 #include "helpers.h"
+#include "object.h"
 #include <vector>
 #include <cmath>
 
@@ -12,7 +13,7 @@ public:
     bool intersect(const Ray& r, Vector& P, Vector& N, int& id);
     Vector getColor(const Ray &ray, int recursion, int recursionMax);
 
-    std::vector<Sphere> objects;
+    std::vector<Object*> objects;
     Vector L;
 };
 

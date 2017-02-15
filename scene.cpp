@@ -1,11 +1,12 @@
 #include "scene.h"
+#include "object.h"
 #ifndef M_PI
 #define M_PI (3.14159265358979323846)
 #endif
 
 Scene::Scene()
 {
-    objects =std::vector<Sphere>();
+    objects =std::vector<Object*>();
 }
 
 bool Scene::intersect(const Ray& r, Vector& P, Vector& N, int& id) {
@@ -15,7 +16,7 @@ bool Scene::intersect(const Ray& r, Vector& P, Vector& N, int& id) {
         double t;
         Vector N1;
         Vector P1;
-        if (objects[i].intersect(r, P1, t, N1)) {
+        if (objects[i]->intersect(r, P1, t, N1)) {
             result = true;
             if (t<mint) {
                 mint = t;
@@ -34,13 +35,14 @@ Vector Scene::getColor(const Ray &ray, int recursion, int recursionMax) {
     Vector finalColor;
 
     if (intersect(ray, P, N, sphereId)) {
-        if (objects[sphereId].material.emissivity > 1) {
-            finalColor = objects[sphereId].material.emissivity*objects[sphereId].material.color;
-            if (recursion == recursionMax) {
-                return finalColor;
-            }
+        if (objects[sphereId]->material.emissivity > 1) {
+            finalColor = objects[sphereId]->material.emissivity*objects[sphereId]->material.color;
+//            if (recursion == recursionMax) {
+//                return finalColor;
+//            }
+            return finalColor;
         }
-        if(objects[sphereId].material.isDiffuse()){
+        if(objects[sphereId]->material.isDiffuse()){
             /*
             Vector l = L-P;
             double distLight2 = l.squaredNorm();
@@ -57,12 +59,12 @@ Vector Scene::getColor(const Ray &ray, int recursion, int recursionMax) {
                 }
             }
 
-            finalColor = shadow_coeff * (1500.*dot(N,l)/distLight2)*objects[sphereId].material.color;
+            finalColor = shadow_coeff * (1500.*dot(N,l)/distLight2)*objects[sphereId]->material.color;
             */
-            Vector xP = (P-objects[0].O).getNormalized();
+            Vector xP = (P-dynamic_cast<Sphere*>(objects[0])->O).getNormalized();
             Vector randomvect;
             randomvect.random_cos(xP);
-            Vector sampledLightSource = randomvect*objects[0].R + objects[0].O;
+            Vector sampledLightSource = randomvect*dynamic_cast<Sphere*>(objects[0])->R + dynamic_cast<Sphere*>(objects[0])->O;
             double distLight2 = (sampledLightSource-P).squaredNorm();
             Vector omega_i=(sampledLightSource-P).getNormalized();
             double shadow_coeff = 1;
@@ -75,21 +77,21 @@ Vector Scene::getColor(const Ray &ray, int recursion, int recursionMax) {
                 }
             }
             double pdf = dot(xP, randomvect);
-            finalColor = shadow_coeff*std::max(0., dot(N,omega_i)/distLight2)*dot(Nprime, -omega_i)/pdf*objects[sphereId].material.color*objects[0].material.emissivity;
+            finalColor = shadow_coeff*std::max(0., dot(N,omega_i)/distLight2)*dot(Nprime, -omega_i)/pdf*objects[sphereId]->material.color*objects[0]->material.emissivity;
 
             if (recursion>0) {
                 Vector random_direction;
                 random_direction.random_cos(N);
                 Vector indirect = getColor(Ray(P+0.001*N, random_direction), recursion-1, recursionMax);
-                finalColor = finalColor + objects[sphereId].material.diffusionCoefficient*objects[sphereId].material.color*indirect*(1./M_PI);
+                finalColor = finalColor + objects[sphereId]->material.diffusionCoefficient*objects[sphereId]->material.color*indirect*(1./M_PI);
             }
             return finalColor;
-        } if(objects[sphereId].material.isSpecular()) {
+        } if(objects[sphereId]->material.isSpecular()) {
             if(recursion > 0){
                 Vector refl = ray.u.reflect(N);
-                return getColor(Ray(P+0.01*N, refl), recursion-1, recursionMax)*this->objects[sphereId].material.color;
+                return getColor(Ray(P+0.01*N, refl), recursion-1, recursionMax)*this->objects[sphereId]->material.color;
             }
-        } if(objects[sphereId].material.isTransparent()) {
+        } if(objects[sphereId]->material.isTransparent()) {
             if(recursion >0){
                 bool is_refracted;
                 double n1=1;

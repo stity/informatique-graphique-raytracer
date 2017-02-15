@@ -24,6 +24,10 @@ double Vector::operator[](int i) const {
     return xyz[i];
 }
 
+double& Vector::operator [](int i) {
+    return xyz[i];
+}
+
 double Vector::squaredNorm() {
     return xyz[0]*xyz[0]+xyz[1]*xyz[1]+xyz[2]*xyz[2];
 }

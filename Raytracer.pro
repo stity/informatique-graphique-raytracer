@@ -9,7 +9,9 @@ SOURCES += main.cpp \
     vector.cpp \
     sphere.cpp \
     scene.cpp \
-    material.cpp
+    material.cpp \
+    object.cpp \
+    boundingbox.cpp
 
 HEADERS += \
     ray.h \
@@ -17,16 +19,21 @@ HEADERS += \
     sphere.h \
     scene.h \
     helpers.h \
-    material.h
+    material.h \
+    geometry.h \
+    object.h \
+    boundingbox.h
 
 QMAKE_CFLAGS_RELEASE += -fopenmp
-QMAKE_CFLAGS_DEBUG += -fopenmp \
-                      -gdwarf-2
+QMAKE_CFLAGS_DEBUG += -fopenmp
 QMAKE_CXXFLAGS += -fopenmp
 QMAKE_LFLAGS +=  -fopenmp \
-                   -O3
+                 -O3
 QMAKE_CXXFLAGS_RELEASE += -O3
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_LFLAGS_RELEASE +=  -O3
 QMAKE_LFLAGS_RELEASE -=  -O1
+
+OTHER_FILES += \
+    girl.obj
 

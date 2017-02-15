@@ -9,8 +9,28 @@
 #include "material.h"
 #include "helpers.h"
 #include <random>
+#include "geometry.h"
+#include <csignal>
 
 using namespace std;
+
+
+// Dimensions de l'image finale
+int H = 1024;
+int W = 1024;
+
+// Définition de l'image
+unsigned char *img = NULL;
+
+void signalHandler( int signum ) {
+   cout << "Interrupt signal (" << signum << ") received.\n";
+
+
+   saveBMP(W, H, img);
+
+   exit(signum);
+
+}
 
 
 
@@ -26,18 +46,14 @@ int main(int argc, char *argv[])
     std::uniform_real_distribution<double> distrib(0,1);
 
 
-    // Dimensions de l'image finale
-    int H = 1024;
-    int W = 1024;
-
     // Définition de l'image
-    unsigned char *img = NULL;
     if (img) {
         free(img);
     }
     img = (unsigned char *)malloc(3*W*H);
     memset(img,0,sizeof(img));
 
+    signal(SIGINT, signalHandler);
     // Champ visuel en radians
     double fov = 60*3.14/180;
 
@@ -59,26 +75,30 @@ int main(int argc, char *argv[])
     Vector diffuseTransparent(true, false, true);
 
     // Définition des éléments à observer
-    Sphere sphere1(Vector(0,0,10), 10, white, transparent);
-    Sphere sphere2(Vector(0,0,20), 10, white, diffuse, 1.0);
-    Sphere sphere3(Vector(-15,0,20), 3, white, mirror);
+    Sphere* sphere1 = new Sphere(Vector(0,0,10), 10, white, transparent);
+    Sphere* sphere2 = new Sphere(Vector(0,0,20), 10, white, diffuse, 1.0);
+    Sphere* sphere3 = new Sphere(Vector(-15,0,20), 3, white, mirror);
 
     // Définition des "murs"
-    Sphere mur1(Vector(0,0,-1000), 940., green, diffuse);
-    Sphere mur2(Vector(0,1000,0), 960., red, diffuse);
-    Sphere mur3(Vector(0,0,1000), 940., yellow, diffuse);
-    Sphere mur4(Vector(0,-1000,0), 990., blue, diffuse);
-    Sphere mur5(Vector(-1000,0,0), 960., yellow, diffuse);
-    Sphere mur6(Vector(1000,0,0), 960., yellow, diffuse);
+    Sphere* mur1 = new Sphere(Vector(0,0,-1000), 940., green, diffuse);
+    Sphere* mur2 = new Sphere(Vector(0,1000,0), 960., red, diffuse);
+    Sphere* mur3 = new Sphere(Vector(0,0,1000), 940., yellow, diffuse);
+    Sphere* mur4 = new Sphere(Vector(0,-1000,0), 990., blue, diffuse);
+    Sphere* mur5 = new Sphere(Vector(-1000,0,0), 960., yellow, diffuse);
+    Sphere* mur6 = new Sphere(Vector(1000,0,0), 960., yellow, diffuse);
+
+    //Chargement du mesh
+    Geometry* mesh = new Geometry("girl.obj");
 
     // Création de la scène en ajoutant les objets à afficher
     Scene scene;
     //scene.L = Vector(-10,20,40); // Lumière de la scène
     //scene.L = Vector(10,10,40);
-    Sphere luxSphere(Vector(10,10,40), 3, white, diffuse,1.0, 750);
+    Sphere* luxSphere = new Sphere(Vector(10,10,40), 3, white, diffuse,1.0, 750);
     //scene.objects.push_back(sphere1);
     scene.objects.push_back(luxSphere);
-    scene.objects.push_back(sphere2);
+    //scene.objects.push_back(sphere2);
+    scene.objects.push_back(mesh);
     //scene.objects.push_back(sphere3);
     scene.objects.push_back(mur1);
     scene.objects.push_back(mur2);
@@ -87,10 +107,10 @@ int main(int argc, char *argv[])
     scene.objects.push_back(mur5);
     scene.objects.push_back(mur6);
 
-    int sampleNumber = 10;
+    int sampleNumber = 1;
     int linesDone = 0;
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(dynamic,2)
     for (int i=H*(partition-1)/totalPartition; i<H*partition/totalPartition; i++) {
         printProgress(100*linesDone++*totalPartition/H, linesDone);
         for (int j=0; j <W; j++) {
@@ -107,8 +127,8 @@ int main(int argc, char *argv[])
                 Vector Pfocal = C + 55*u;
                 double r1_bis = distrib(engine);
                 double r2_bis = distrib(engine);
-                double x_bis = sqrt(-2*log(r1_bis))*cos(2.*M_PI*r2_bis)*0.5;
-                double y_bis = sqrt(-2*log(r1_bis))*sin(2.*M_PI*r2_bis)*0.5;
+                double x_bis = sqrt(-2*log(r1_bis))*cos(2.*M_PI*r2_bis)*0.2;
+                double y_bis = sqrt(-2*log(r1_bis))*sin(2.*M_PI*r2_bis)*0.2;
 
                 Vector ubis = Pfocal - (C+Vector(x_bis, y_bis,0));
                 ubis.normalize();
@@ -117,7 +137,7 @@ int main(int argc, char *argv[])
                 // Calcul du vecteur d'intensité avec profondeur de champ
                 //Vector intensity = scene.getColor(Ray(C+Vector(x_bis,y_bis,0), ubis), 5, 5);
                 //sans profondeur de champ
-                Vector intensity = scene.getColor(Ray(C, u), 5, 5);
+                Vector intensity = scene.getColor(Ray(C, u), 0, 0);
                 sum_intensities = sum_intensities + intensity;
             }
             sum_intensities = sum_intensities*(1./sampleNumber);

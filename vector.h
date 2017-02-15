@@ -16,6 +16,7 @@ public:
     double xyz[3];
 
     double operator[](int i) const ;
+    double& operator[](int i);
     double squaredNorm();
     void normalize();
     Vector getNormalized();
