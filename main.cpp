@@ -11,6 +11,7 @@
 #include <random>
 #include "geometry.h"
 #include <csignal>
+#include <thread>
 
 using namespace std;
 
@@ -42,8 +43,6 @@ int main(int argc, char *argv[])
         partition = std::stoi(argv[1]);
         totalPartition = std::stoi(argv[2]);
     }
-    std::default_random_engine engine;
-    std::uniform_real_distribution<double> distrib(0,1);
 
 
     // Définition de l'image
@@ -108,36 +107,36 @@ int main(int argc, char *argv[])
     scene.objects.push_back(mur6);
 
     int sampleNumber = 1;
-    int linesDone = 0;
+    static thread_local int linesDone = 0;
 
 #pragma omp parallel for schedule(dynamic,2)
     for (int i=H*(partition-1)/totalPartition; i<H*partition/totalPartition; i++) {
-        printProgress(100*linesDone++*totalPartition/H, linesDone);
+        printProgress(800*linesDone++*totalPartition/H, 8*linesDone);
         for (int j=0; j <W; j++) {
 
             Vector sum_intensities;
             for (int k = 0; k<sampleNumber; k++) {
-                double r1 = distrib(engine)-0.5;
-                double r2 = distrib(engine)-0.5;
+                double r1 = doubleRand()-0.5;
+                double r2 =doubleRand()-0.5;
                 // Direction associée au pixel
                 Vector u (j+r1-W/2., H-i+r2-H/2., -W/(2.*tan(fov/2.)));
                 u.normalize();
 
                 //profondeur de champ
-                Vector Pfocal = C + 55*u;
-                double r1_bis = distrib(engine);
-                double r2_bis = distrib(engine);
+                /*Vector Pfocal = C + 55*u;
+                double r1_bis = doubleRand();
+                double r2_bis = doubleRand();
                 double x_bis = sqrt(-2*log(r1_bis))*cos(2.*M_PI*r2_bis)*0.2;
                 double y_bis = sqrt(-2*log(r1_bis))*sin(2.*M_PI*r2_bis)*0.2;
 
                 Vector ubis = Pfocal - (C+Vector(x_bis, y_bis,0));
-                ubis.normalize();
+                ubis.normalize();*/
 
 
                 // Calcul du vecteur d'intensité avec profondeur de champ
                 //Vector intensity = scene.getColor(Ray(C+Vector(x_bis,y_bis,0), ubis), 5, 5);
                 //sans profondeur de champ
-                Vector intensity = scene.getColor(Ray(C, u), 0, 0);
+                Vector intensity = scene.getColor(Ray(C, u), 5, 5);
                 sum_intensities = sum_intensities + intensity;
             }
             sum_intensities = sum_intensities*(1./sampleNumber);

@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include <iostream>
 #include <sstream>
+#include <thread>
+#include <algorithm>
+#include <random>
 
 #ifndef M_PI
 #define M_PI (3.14159265358979323846)
@@ -71,6 +74,13 @@ inline void printProgress(int x, int lines=0){
     }
     msg << std::flush;
     std::cout << msg.str();
+}
+
+
+inline double doubleRand() {
+    static thread_local std::mt19937 generator;
+    std::uniform_real_distribution<double> distrib(0, 1);
+    return distrib(generator);
 }
 
 
