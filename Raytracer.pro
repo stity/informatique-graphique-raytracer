@@ -11,7 +11,14 @@ SOURCES += main.cpp \
     scene.cpp \
     material.cpp \
     object.cpp \
-    boundingbox.cpp
+    boundingbox.cpp \
+    objectcsg.cpp \
+    union.cpp \
+    spherecsg.cpp \
+    cylindercsg.cpp \
+    intersectionpointcsg.cpp \
+    intersection.cpp \
+    substraction.cpp
 
 HEADERS += \
     ray.h \
@@ -22,7 +29,14 @@ HEADERS += \
     material.h \
     geometry.h \
     object.h \
-    boundingbox.h
+    boundingbox.h \
+    objectcsg.h \
+    union.h \
+    spherecsg.h \
+    cylindercsg.h \
+    intersectionpointcsg.h \
+    intersection.h \
+    substraction.h
 
 QMAKE_CFLAGS_RELEASE += -fopenmp
 QMAKE_CFLAGS_DEBUG += -fopenmp

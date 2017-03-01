@@ -11,13 +11,12 @@ public:
 
     Vector refract(const Vector& N, double n1, double n2, bool &is_refracted) const;
     Vector reflect(const Vector& N) const;
-    double dot(const Vector& a);
 
     double xyz[3];
 
     double operator[](int i) const ;
     double& operator[](int i);
-    double squaredNorm();
+    double squaredNorm() const;
     void normalize();
     Vector getNormalized();
     double dot(const Vector& b) const;

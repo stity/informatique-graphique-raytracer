@@ -12,6 +12,11 @@
 #include "geometry.h"
 #include <csignal>
 #include <thread>
+#include "spherecsg.h"
+#include "union.h"
+#include "intersection.h"
+#include "substraction.h"
+#include "cylindercsg.h"
 
 using namespace std;
 
@@ -96,8 +101,8 @@ int main(int argc, char *argv[])
     Sphere* luxSphere = new Sphere(Vector(10,10,40), 3, white, diffuse,1.0, 750);
     //scene.objects.push_back(sphere1);
     scene.objects.push_back(luxSphere);
-    //scene.objects.push_back(sphere2);
-    scene.objects.push_back(mesh);
+    scene.objects.push_back(sphere2);
+    //scene.objects.push_back(mesh);
     //scene.objects.push_back(sphere3);
     scene.objects.push_back(mur1);
     scene.objects.push_back(mur2);
@@ -106,12 +111,13 @@ int main(int argc, char *argv[])
     scene.objects.push_back(mur5);
     scene.objects.push_back(mur6);
 
-    int sampleNumber = 1;
+
+    int sampleNumber = 10;
     static thread_local int linesDone = 0;
 
 #pragma omp parallel for schedule(dynamic,2)
     for (int i=H*(partition-1)/totalPartition; i<H*partition/totalPartition; i++) {
-        printProgress(800*linesDone++*totalPartition/H, 8*linesDone);
+        printProgress(800*++linesDone*totalPartition/H, 8*linesDone);
         for (int j=0; j <W; j++) {
 
             Vector sum_intensities;
@@ -138,6 +144,7 @@ int main(int argc, char *argv[])
                 //sans profondeur de champ
                 Vector intensity = scene.getColor(Ray(C, u), 5, 5);
                 sum_intensities = sum_intensities + intensity;
+
             }
             sum_intensities = sum_intensities*(1./sampleNumber);
 

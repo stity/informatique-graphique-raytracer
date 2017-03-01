@@ -100,7 +100,7 @@ public:
         bbox.bmax = Vector(-1E99, -1E99, -1E99);
         double bmin0 = 1E99, bmin1 = 1E99, bmin2 = 1E99, bmax0 = -1E99, bmax1 = -1E99, bmax2 = -1E99;
 
-        for (int i = 0; i < vertices.size(); i++) {
+        for (unsigned int i = 0; i < vertices.size(); i++) {
             bmin0 = std::min(bmin0, vertices[i][0]);
             bmin1 = std::min(bmin1, vertices[i][1]);
             bmin2 = std::min(bmin2, vertices[i][2]);
@@ -157,7 +157,7 @@ public:
         }
 
 
-        for (int i = 0; i < faces.size()/3; i++) {
+        for (unsigned int i = 0; i < faces.size()/3; i++) {
             Vector current_n;
             double current_t;
             if (intersect(r, i, current_n, current_t)) {

@@ -12,7 +12,7 @@ Scene::Scene()
 bool Scene::intersect(const Ray& r, Vector& P, Vector& N, int& id) {
     double mint = 1E9;
     bool result = false;
-    for(int i = 0; i<objects.size(); i++) {
+    for(unsigned int i = 0; i<objects.size(); i++) {
         double t;
         Vector N1;
         Vector P1;
@@ -120,4 +120,5 @@ Vector Scene::getColor(const Ray &ray, int recursion, int recursionMax) {
     } else {
         return Vector(0.,0.,0.);
     }
+    return finalColor;
 }

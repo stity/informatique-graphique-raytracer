@@ -28,13 +28,10 @@ double& Vector::operator [](int i) {
     return xyz[i];
 }
 
-double Vector::squaredNorm() {
+double Vector::squaredNorm() const {
     return xyz[0]*xyz[0]+xyz[1]*xyz[1]+xyz[2]*xyz[2];
 }
 
-double Vector::dot(const Vector& a) {
-    return a[0]*xyz[0]+a[1]*xyz[1]+a[2]*xyz[2];
-}
 
 Vector Vector::reflect(const Vector& N) const {
     return *this-2.*dot(N)*N;
