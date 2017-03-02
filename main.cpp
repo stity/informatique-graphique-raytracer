@@ -7,7 +7,6 @@
 #include "ray.h"
 #include "scene.h"
 #include "material.h"
-#include "helpers.h"
 #include <random>
 #include "geometry.h"
 #include <csignal>
@@ -17,6 +16,9 @@
 #include "intersection.h"
 #include "substraction.h"
 #include "cylindercsg.h"
+
+
+std::mt19937 generator;
 
 using namespace std;
 
@@ -90,6 +92,12 @@ int main(int argc, char *argv[])
     Sphere* mur4 = new Sphere(Vector(0,-1000,0), 990., blue, diffuse);
     Sphere* mur5 = new Sphere(Vector(-1000,0,0), 960., yellow, diffuse);
     Sphere* mur6 = new Sphere(Vector(1000,0,0), 960., yellow, diffuse);
+    Material m(white, diffuse);
+    SphereCSG* sphereCSG = new SphereCSG(Vector(-3,0,20), 10, m);
+    SphereCSG* sphereCSG2 = new SphereCSG(Vector(0,0,30), 5, m);
+    Union* unionCSG = new Union(sphereCSG, sphereCSG2);
+    Intersection* interCSG = new Intersection(sphereCSG, sphereCSG2);
+    Substraction* subCSG = new Substraction(sphereCSG, sphereCSG2);
 
     //Chargement du mesh
     Geometry* mesh = new Geometry("girl.obj");
@@ -101,7 +109,10 @@ int main(int argc, char *argv[])
     Sphere* luxSphere = new Sphere(Vector(10,10,40), 3, white, diffuse,1.0, 750);
     //scene.objects.push_back(sphere1);
     scene.objects.push_back(luxSphere);
-    scene.objects.push_back(sphere2);
+    //scene.objects.push_back(sphere2);
+    //scene.objects.push_back(unionCSG);
+    //scene.objects.push_back(interCSG);
+    scene.objects.push_back(subCSG);
     //scene.objects.push_back(mesh);
     //scene.objects.push_back(sphere3);
     scene.objects.push_back(mur1);
@@ -112,8 +123,9 @@ int main(int argc, char *argv[])
     scene.objects.push_back(mur6);
 
 
-    int sampleNumber = 10;
-    static thread_local int linesDone = 0;
+
+    int sampleNumber = 100;
+    thread_local int linesDone = 0;
 
 #pragma omp parallel for schedule(dynamic,2)
     for (int i=H*(partition-1)/totalPartition; i<H*partition/totalPartition; i++) {

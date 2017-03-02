@@ -10,7 +10,6 @@ public:
     Vector A;
     Vector B;
     double R;
-    Material material;
     bool isInside(const Vector & P) const {
         Vector u = (B-A).getNormalized();
         return ((P-A-(P-A).dot(u)*u).squaredNorm()<(R*R)) && ((P-A).dot(u)>0) && ((P-B).dot(u) < 0);

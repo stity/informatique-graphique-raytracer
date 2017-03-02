@@ -16,10 +16,16 @@ void Union::intersect(const Ray &r, std::vector<IntersectionPointCSG *> &LI) con
         if (!this->b->isInside(LIa[i]->P)) {
             LI.push_back(LIa[i]);
         }
+        else {
+            delete LIa[i];
+        }
     }
     for (int i = 0; i < LIb.size(); ++i) {
         if (!this->a->isInside(LIb[i]->P)) {
             LI.push_back(LIb[i]);
+        }
+        else {
+            delete LIb[i];
         }
     }
 }

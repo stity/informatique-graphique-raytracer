@@ -76,9 +76,9 @@ inline void printProgress(int x, int lines=0){
     std::cout << msg.str();
 }
 
-
+extern std::mt19937 generator;
 inline double doubleRand() {
-    static thread_local std::mt19937 generator;
+    /*static thread_local std::mt19937 generator;*/
     std::uniform_real_distribution<double> distrib(0, 1);
     return distrib(generator);
 }

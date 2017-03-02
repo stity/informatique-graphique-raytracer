@@ -6,7 +6,7 @@
 class IntersectionPointCSG
 {
 public:
-    IntersectionPointCSG(Vector& P, Vector& N,const Material& M);
+    IntersectionPointCSG(Vector& P, Vector& N, Material& M);
     Vector P;
     Vector N;
     Material M;

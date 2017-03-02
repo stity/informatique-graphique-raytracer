@@ -6,7 +6,7 @@ Sphere::Sphere(Vector O, double R, Vector color, Vector opticProperty, double di
     this->material = Material(color, opticProperty, diffusionCoeff, emissivity);
 }
 
-bool Sphere::intersect(const Ray& r, Vector& P, double& t, Vector& N) const {
+bool Sphere::intersect(const Ray& r, Vector& P, double& t, Vector& N, Material &M) const {
     double a =1;
     double b = 2.*dot(r.u,r.C-O);
     double c = (r.C-O).squaredNorm() - R*R;
@@ -21,6 +21,7 @@ bool Sphere::intersect(const Ray& r, Vector& P, double& t, Vector& N) const {
             t = t1;
             N = P-O;
             N.normalize();
+            M = this->material;
             return true;
         }
         else if (t2 > 0) {
@@ -28,6 +29,7 @@ bool Sphere::intersect(const Ray& r, Vector& P, double& t, Vector& N) const {
             t = t2;
             N = P-O;
             N.normalize();
+            M = this->material;
             return true;
         }
     }

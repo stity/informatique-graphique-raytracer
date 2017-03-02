@@ -25,15 +25,17 @@ void SphereCSG::intersect(const Ray & r, std::vector<IntersectionPointCSG *> & L
             t = t1;
             N = P-C;
             N.normalize();
-            IntersectionPointCSG* IP = new IntersectionPointCSG(P, N, this->material);
+            Material m = Material(this->material);
+            IntersectionPointCSG* IP = new IntersectionPointCSG(P, N, m);
             LI.push_back(IP);
         }
-        else if (t2 > 0) {
+        if (t2 > 0) {
             P = r.C+ t2*r.u;
             t = t2;
             N = P-C;
             N.normalize();
-            IntersectionPointCSG* IP = new IntersectionPointCSG(P, N, this->material);
+            Material m = Material(this->material);
+            IntersectionPointCSG* IP = new IntersectionPointCSG(P, N, m);
             LI.push_back(IP);
         }
     }

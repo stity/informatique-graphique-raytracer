@@ -1,6 +1,6 @@
 #include "intersectionpointcsg.h"
 
-IntersectionPointCSG::IntersectionPointCSG(Vector &P, Vector &N, const Material &M)
+IntersectionPointCSG::IntersectionPointCSG(Vector &P, Vector &N, Material &M)
 {
     this->P = P;
     this->N = N;

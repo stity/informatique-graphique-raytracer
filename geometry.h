@@ -147,7 +147,7 @@ public:
         return false;
     }
 
-    bool intersect(const Ray& r, Vector &P,  double &t, Vector &normale) const {
+    bool intersect(const Ray& r, Vector &P,  double &t, Vector &normale, Material& M) const {
 
         t =  1E99;
         bool has_intersection = false;
@@ -169,6 +169,7 @@ public:
             }
         }
         P = r.C + t*r.u;
+        M = material;
         return has_intersection;
     }
 

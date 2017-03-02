@@ -12,7 +12,6 @@ public:
     void intersect(const Ray &r, std::vector<IntersectionPointCSG *> &LI) const;
     Vector C;
     double R;
-    Material material;
 };
 
 #endif // SPHERECSG_H

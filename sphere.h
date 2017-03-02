@@ -12,7 +12,7 @@ class Sphere : public Object {
 public:
     Sphere(Vector O, double R, Vector color, Vector opticProperty, double diffusionCoeff=1, double emissivity=0);
 
-    bool intersect(const Ray& r, Vector& P, double& t, Vector& N) const;
+    bool intersect(const Ray& r, Vector& P, double& t, Vector& N, Material& M) const;
     bool isInside(const Vector& p) const { return (p-O).squaredNorm()<(R*R);}
 
     Vector O;

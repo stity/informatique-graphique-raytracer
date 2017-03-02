@@ -8,6 +8,21 @@ Material::Material(Vector color, Vector caracteristics, double diffusionCoeffici
     this->emissivity = emissivity;
 }
 
+Material::Material(Material& m)
+{
+    this->color = Vector(m.color);
+    this->caracteristics = Vector(m.caracteristics);
+    this->diffusionCoefficient = m.diffusionCoefficient;
+    this->emissivity = m.emissivity;
+}
+Material::Material(const Material& m)
+{
+    this->color = Vector(m.color);
+    this->caracteristics = Vector(m.caracteristics);
+    this->diffusionCoefficient = m.diffusionCoefficient;
+    this->emissivity = m.emissivity;
+}
+
 bool Material::isDiffuse() {
     return this->caracteristics[0];
 }
