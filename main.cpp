@@ -18,6 +18,7 @@
 #include "cylindercsg.h"
 #include "quarticSolver.h"
 #include "toruscsg.h"
+#include "boxcsg.h"
 
 
 std::mt19937 generator;
@@ -97,6 +98,7 @@ int main(int argc, char *argv[])
     Material m(white, diffuse);
     SphereCSG* sphereCSG = new SphereCSG(Vector(0,7,20), 10, m);
     SphereCSG* sphereCSG2 = new SphereCSG(Vector(0,0,30), 5, m);
+    BoxCSG* box = new BoxCSG(Vector(0,0,30), Vector(1,0,-1), Vector(0,1,1), Vector(1,1,1)*5);
     Union* unionCSG = new Union(sphereCSG, sphereCSG2);
     CylinderCSG* cylinder = new CylinderCSG(Vector(-15,-7,20), Vector(15,25,20), 5, m);
     Substraction* subCSG = new Substraction(sphereCSG, cylinder);
@@ -115,10 +117,11 @@ int main(int argc, char *argv[])
     scene.objects.push_back(luxSphere);
     //scene.objects.push_back(sphere2);
     //scene.objects.push_back(unionCSG);
-    scene.objects.push_back(interCSG);
+    //scene.objects.push_back(interCSG);
     //scene.objects.push_back(torus);
     //scene.objects.push_back(mesh);
     //scene.objects.push_back(sphere3);
+    scene.objects.push_back(box);
     scene.objects.push_back(mur1);
     scene.objects.push_back(mur2);
     scene.objects.push_back(mur3);

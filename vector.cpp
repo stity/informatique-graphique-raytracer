@@ -112,3 +112,12 @@ Vector Vector::cross(const Vector& b) const {
     result.xyz[2] = this->xyz[0]*b[1] - this->xyz[1]*b[0];
     return result;
 }
+
+
+double Vector::infiniteNorm() const{
+    double n = abs(xyz[0]);
+    n = std::max(n, (double) abs((double) xyz[1]));
+    n = std::max(n, (double) abs(xyz[2]));
+    return n;
+
+}

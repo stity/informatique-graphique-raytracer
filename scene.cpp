@@ -40,10 +40,10 @@ Vector Scene::getColor(const Ray &ray, int recursion, int recursionMax) {
     if (intersect(ray, P, N, sphereId, material)) {
         if (material.emissivity > 1) {
             finalColor = material.emissivity*material.color;
-//            if (recursion == recursionMax) {
-//                return finalColor;
-//            }
-            return finalColor;
+            if (recursion == recursionMax) {
+                return finalColor;
+            }
+            //return finalColor;
         }
         if(material.isDiffuse()){
             /*
