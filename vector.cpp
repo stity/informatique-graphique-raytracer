@@ -77,27 +77,32 @@ void Vector::random_cos(const Vector& N) {
     double z = sqrt(v);
 
     Vector tangent1;
-    double abs0 = abs((double) N[0]);
-    double abs1 = abs((double) N[1]);
-    double abs2 = abs((double) N[20]);
-    double minComp = std::min(abs0,abs1);
-    minComp = std::min(minComp, abs2);
-    if (N[0] <= minComp) {
-        tangent1 = Vector(0,N[2],-N[1]);
-    }
-    else if (N[1] <= minComp) {
-        tangent1 = Vector(N[2],0,-N[0]);
-    }
-    else {
-        tangent1 = Vector(N[1],-N[0],0);
-    }
-    tangent1.normalize();
-    Vector tangent2 = N.cross(tangent1);
+    Vector tangent2;
+    N.orthogonalSystem(tangent1, tangent2);
     Vector result;
     result = x*tangent1+y*tangent2+z*N;
     this->xyz[0] = result[0];
     this->xyz[1] = result[1];
     this->xyz[2] = result[2];
+}
+
+void Vector::orthogonalSystem(Vector &tangent1, Vector &tangent2) const {
+    double abs0 = abs(xyz[0]);
+    double abs1 = abs(xyz[1]);
+    double abs2 = abs(xyz[2]);
+    double minComp = std::min(abs0,abs1);
+    minComp = std::min(minComp, abs2);
+    if (xyz[0] <= minComp) {
+        tangent1 = Vector(0,xyz[2],-xyz[1]);
+    }
+    else if (xyz[1] <= minComp) {
+        tangent1 = Vector(xyz[2],0,-xyz[0]);
+    }
+    else {
+        tangent1 = Vector(xyz[1],-xyz[0],0);
+    }
+    tangent1.normalize();
+    tangent2 = this->cross(tangent1);
 }
 
 Vector Vector::cross(const Vector& b) const {

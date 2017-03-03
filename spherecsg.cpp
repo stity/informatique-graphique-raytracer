@@ -9,7 +9,6 @@ SphereCSG::SphereCSG(Vector C, double R, Material M)
 
 void SphereCSG::intersect(const Ray & r, std::vector<IntersectionPointCSG *> & LI) const {
     Vector P;
-    double t;
     Vector N;
     double a =1;
     double b = 2.*r.u.dot(r.C-C);
@@ -22,7 +21,6 @@ void SphereCSG::intersect(const Ray & r, std::vector<IntersectionPointCSG *> & L
 
         if (t1 > 0) {
             P = r.C+ t1*r.u;
-            t = t1;
             N = P-C;
             N.normalize();
             Material m = Material(this->material);
@@ -31,7 +29,6 @@ void SphereCSG::intersect(const Ray & r, std::vector<IntersectionPointCSG *> & L
         }
         if (t2 > 0) {
             P = r.C+ t2*r.u;
-            t = t2;
             N = P-C;
             N.normalize();
             Material m = Material(this->material);

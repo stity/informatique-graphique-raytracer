@@ -22,6 +22,7 @@ public:
     double dot(const Vector& b) const;
     void random_cos(const Vector& N);
     Vector cross(const Vector& b) const;
+    void orthogonalSystem(Vector& tangent1, Vector& tangent2) const;
 
 };
 

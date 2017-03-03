@@ -11,6 +11,7 @@
 #include <thread>
 #include <algorithm>
 #include <random>
+#include <complex>
 
 #ifndef M_PI
 #define M_PI (3.14159265358979323846)
@@ -82,6 +83,5 @@ inline double doubleRand() {
     std::uniform_real_distribution<double> distrib(0, 1);
     return distrib(generator);
 }
-
 
 #endif // HELPERS_H

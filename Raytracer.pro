@@ -18,7 +18,9 @@ SOURCES += main.cpp \
     cylindercsg.cpp \
     intersectionpointcsg.cpp \
     intersection.cpp \
-    substraction.cpp
+    substraction.cpp \
+    toruscsg.cpp \
+    quarticsolver.cpp
 
 HEADERS += \
     ray.h \
@@ -36,7 +38,9 @@ HEADERS += \
     cylindercsg.h \
     intersectionpointcsg.h \
     intersection.h \
-    substraction.h
+    substraction.h \
+    toruscsg.h \
+    quarticsolver.h
 
 QMAKE_CFLAGS_RELEASE += -fopenmp
 QMAKE_CFLAGS_DEBUG += -fopenmp

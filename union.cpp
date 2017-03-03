@@ -12,7 +12,7 @@ void Union::intersect(const Ray &r, std::vector<IntersectionPointCSG *> &LI) con
 
     this->a->intersect(r, LIa);
     this->b->intersect(r, LIb);
-    for (int i = 0; i < LIa.size(); ++i) {
+    for (unsigned int i = 0; i < LIa.size(); ++i) {
         if (!this->b->isInside(LIa[i]->P)) {
             LI.push_back(LIa[i]);
         }
@@ -20,7 +20,7 @@ void Union::intersect(const Ray &r, std::vector<IntersectionPointCSG *> &LI) con
             delete LIa[i];
         }
     }
-    for (int i = 0; i < LIb.size(); ++i) {
+    for (unsigned int i = 0; i < LIb.size(); ++i) {
         if (!this->a->isInside(LIb[i]->P)) {
             LI.push_back(LIb[i]);
         }
