@@ -119,9 +119,9 @@ int main(int argc, char *argv[])
     //scene.objects.push_back(unionCSG);
     //scene.objects.push_back(interCSG);
     //scene.objects.push_back(torus);
-    //scene.objects.push_back(mesh);
+    scene.objects.push_back(mesh);
     //scene.objects.push_back(sphere3);
-    scene.objects.push_back(box);
+    //scene.objects.push_back(box);
     scene.objects.push_back(mur1);
     scene.objects.push_back(mur2);
     scene.objects.push_back(mur3);
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 
 
 
-    int sampleNumber = 10;
+    int sampleNumber = 30;
     thread_local int linesDone = 0;
 
 #pragma omp parallel for schedule(dynamic,2)

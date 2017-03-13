@@ -150,6 +150,9 @@ public:
                 std::swap(faces[i*3], faces[indice_pivot*3]);
                 std::swap(faces[i*3+1], faces[indice_pivot*3+1]);
                 std::swap(faces[i*3+2], faces[indice_pivot*3+2]);
+                std::swap(normalIds[i*3], normalIds[indice_pivot*3]);
+                std::swap(normalIds[i*3+1], normalIds[indice_pivot*3+1]);
+                std::swap(normalIds[i*3+2], normalIds[indice_pivot*3+2]);
             }
 
         }
@@ -168,6 +171,10 @@ public:
         const Vector &A = vertices[faces[id*3]];
         const Vector &B = vertices[faces[id*3+1]];
         const Vector &C = vertices[faces[id*3+2]];
+
+        const Vector &nA = normals[normalIds[id*3]];
+        const Vector &nB = normals[normalIds[id*3+1]];
+        const Vector &nC = normals[normalIds[id*3+2]];
 
         normale = (C-A).cross(B-A).getNormalized();
 
@@ -190,6 +197,10 @@ public:
         double alpha = (uw*vv - vw*uv)/detM;
         double beta = (uu*vw-uv*uw)/detM;
 
+        // TODO : calculer normales avec les alpha, beta, gamma = 1-alpha-beta
+        // TODO : garder les normales dans le même ordres que vertices
+        normale = alpha*nB+beta*nC+(1-alpha-beta)*nA;
+
         return (alpha > 0 && beta > 0 && alpha + beta < 1);
     }
 
@@ -205,43 +216,32 @@ public:
         std::list<BVH*> l;
         l.push_back(bvh);
 
-//        while(!l.empty()) {
-//            BVH* node = l.front();
-//            l.pop_front();
+        while(!l.empty()) {
+            BVH* node = l.front();
+            l.pop_front();
 
-//            if(node->left && node->left->bbox.intersect(r)) {
-//                l.push_back(node->left);
-//            }
-//            if(node->right && node->right->bbox.intersect(r)) {
-//                l.push_back(node->right);
-//            }
+            if(node->left && node->left->bbox.intersect(r)) {
+                l.push_back(node->left);
+            }
+            if(node->right && node->right->bbox.intersect(r)) {
+                l.push_back(node->right);
+            }
 
-//            if(!node->left && !node->right) {
+            if(!node->left && !node->right) {
 
-////                for (unsigned int i = node->i0; i <= node->i1; i++) {
-////                    Vector current_n;
-////                    double current_t;
-////                    if (intersect(r, i, current_n, current_t)) {
-////                        has_intersection = true;
-////                        if (current_t < t) {
-////                            t = current_t;
-////                            normale = current_n;
-////                        }
-////                    }
-////                }
-//            }
-
-//        }
-        for (unsigned int i = 0; i < faces.size()/3; i++) {
-            Vector current_n;
-            double current_t;
-            if (intersect(r, i, current_n, current_t)) {
-                has_intersection = true;
-                if (current_t < t) {
-                    t = current_t;
-                    normale = current_n;
+                for (unsigned int i = node->i0; i <= node->i1; i++) {
+                    Vector current_n;
+                    double current_t;
+                    if (intersect(r, i, current_n, current_t)) {
+                        has_intersection = true;
+                        if (current_t < t) {
+                            t = current_t;
+                            normale = current_n;
+                        }
+                    }
                 }
             }
+
         }
 
 

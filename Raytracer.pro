@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     substraction.cpp \
     toruscsg.cpp \
     quarticsolver.cpp \
-    boxcsg.cpp
+    boxcsg.cpp \
+    bvh.cpp
 
 HEADERS += \
     ray.h \
@@ -42,7 +43,8 @@ HEADERS += \
     substraction.h \
     toruscsg.h \
     quarticsolver.h \
-    boxcsg.h
+    boxcsg.h \
+    bvh.h
 
 QMAKE_CFLAGS_RELEASE += -fopenmp
 QMAKE_CFLAGS_DEBUG += -fopenmp
