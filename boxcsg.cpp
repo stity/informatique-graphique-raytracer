@@ -32,24 +32,6 @@ bool BoxCSG::isAlmostInside(const Vector &P, bool localSystem = false) const {
 void BoxCSG::addIntersectionPoint(double t, Vector &E, Vector &D, std::vector<IntersectionPointCSG *> &LI) const {
     Vector P = D+t*E;
     Vector N;
-    /*if (abs(P[0]/size[0]) > 1-epsilon) {
-        N = T1;
-        if (P[0]/size[0] < 0) {
-            N = -T1;
-        }
-    }
-    else if (abs(P[1]/size[1]) > 1-epsilon) {
-        N = T2;
-        if (P[1]/size[1] < 0) {
-            N = -T2;
-        }
-    }
-    else {
-        N = T3;
-        if (P[2]/size[2] < 0) {
-            N = -T3;
-        }
-    }*/
 
     double min = std::numeric_limits<double>::max();
     double distance = std::abs(size[0] - std::abs(P[0]));
@@ -85,35 +67,6 @@ void BoxCSG::intersect(const Ray &r, std::vector<IntersectionPointCSG *> &LI) co
     double halfx = size[0]/2;
     double halfy = size[1]/2;
     double halfz = size[2]/2;
-
-    /*double tx1 = (-halfx-D[0])/E[0];
-    double tx2 = (halfx-D[0])/E[0];
-    double ty1 = (-halfy-D[1])/E[1];
-    double ty2 = (halfy-D[1])/E[1];
-    double tz1 = (-halfz-D[2])/E[2];
-    double tz2 = (halfz-D[2])/E[2];
-
-    double tmin = std::min(std::min(std::max(tx1,tx2), std::max(ty1,ty2)), std::max(tz1,tz2));
-    double tmax = std::max(std::max(std::min(tx1,tx2), std::min(ty1,ty2)), std::min(tz1,tz2));
-
-    if (tmin>tmax) {
-        return;
-    }
-
-    Vector N;
-
-    N = -T1;
-    addIntersectionPoint(tx1, E, D, N, LI);
-    N = T1;
-    addIntersectionPoint(tx2, E, D, N, LI);
-    N = -T2;
-    addIntersectionPoint(ty1, E, D, N, LI);
-    N = T2;
-    addIntersectionPoint(ty2, E, D, N, LI);
-    N = -T3;
-    addIntersectionPoint(tz1, E, D, N, LI);
-    N = T3;
-    addIntersectionPoint(tz2, E, D, N, LI); */
 
     double tmin, tmax, tymin, tymax, tzmin, tzmax;
     bool rsign0 = E[0] < 0;

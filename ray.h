@@ -7,6 +7,7 @@ public:
     Ray(Vector C, Vector u);
     Vector C;
     Vector u;
+    Vector uInv;
 };
 
 #endif // RAY_H

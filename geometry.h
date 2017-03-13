@@ -7,6 +7,8 @@
 #include "ray.h"
 #include "object.h"
 #include "boundingbox.h"
+#include "bvh.h"
+#include "list"
 
 class Geometry : public Object {
 public:
@@ -92,29 +94,76 @@ public:
 
         }
         fclose(f);
-        build_bbox();
+        bbox = build_bbox(0, faces.size()/3);
+        bvh = new BVH();
+        build_bvh(0, faces.size()/3, bvh);
     }
 
-    void build_bbox() {
+    BoundingBox build_bbox(int i0, int i1) {
+        BoundingBox bbox;
         bbox.bmin = Vector(1E99, 1E99, 1E99);
         bbox.bmax = Vector(-1E99, -1E99, -1E99);
         double bmin0 = 1E99, bmin1 = 1E99, bmin2 = 1E99, bmax0 = -1E99, bmax1 = -1E99, bmax2 = -1E99;
 
-        for (unsigned int i = 0; i < vertices.size(); i++) {
-            bmin0 = std::min(bmin0, vertices[i][0]);
-            bmin1 = std::min(bmin1, vertices[i][1]);
-            bmin2 = std::min(bmin2, vertices[i][2]);
+        for (unsigned int i = i0; i < i1; i++) {
+            for (int j=0; j<3; j++) {
+                bmin0 = std::min(bmin0, vertices[faces[i*3+j]][0]);
+                bmin1 = std::min(bmin1, vertices[faces[i*3+j]][1]);
+                bmin2 = std::min(bmin2, vertices[faces[i*3+j]][2]);
 
-            bmax0 = std::max(bmax0, vertices[i][0]);
-            bmax1 = std::max(bmax1, vertices[i][1]);
-            bmax2 = std::max(bmax2, vertices[i][2]);
+                bmax0 = std::max(bmax0, vertices[faces[i*3+j]][0]);
+                bmax1 = std::max(bmax1, vertices[faces[i*3+j]][1]);
+                bmax2 = std::max(bmax2, vertices[faces[i*3+j]][2]);
+            }
         }
         bbox.bmin = Vector(bmin0, bmin1, bmin2);
         bbox.bmax = Vector(bmax0, bmax1, bmax2);
-        std::cout << bbox.bmin[0] << " " << bbox.bmin[1] << " " << bbox.bmin[2] << " " << bbox.bmax[0] << " " << bbox.bmax[1] << " " << bbox.bmax[1]<< std::endl;
+        return bbox;
     }
 
-    bool intersect(const Ray r, int id, Vector &normale, double &t ) const {
+    void build_bvh(int i0, int i1, BVH* bvh) {
+        BoundingBox bb = build_bbox(i0,i1);
+        bvh->bbox = bb;
+        bvh->i0 = i0;
+        bvh->i1 = i1;
+        Vector diag(bb.bmax[0]-bb.bmin[0], bb.bmax[1]-bb.bmax[1], bb.bmax[2]-bb.bmax[2]);
+
+        int dim_split = 0;
+        if(diag[0] > diag[1] && diag[0] > diag[2]) {
+            dim_split = 0;
+        }
+        else if (diag[1] > diag[2]) {
+            dim_split = 1;
+        }
+        else {
+            dim_split = 2;
+        }
+
+        double coord_pivot = diag[dim_split]/2 + bb.bmin[dim_split];
+        int indice_pivot = i0 - 1;
+
+        for (int i = i0; i < i1; i++) {
+            Vector center = (vertices[faces[i*3]]+vertices[faces[i*3+1]]+vertices[faces[i*3+2]])*(1./3);
+
+            if (center[dim_split] <= coord_pivot) {
+                indice_pivot++;
+                std::swap(faces[i*3], faces[indice_pivot*3]);
+                std::swap(faces[i*3+1], faces[indice_pivot*3+1]);
+                std::swap(faces[i*3+2], faces[indice_pivot*3+2]);
+            }
+
+        }
+
+        if (indice_pivot <= i0 || indice_pivot >= i1) {
+            return;
+        }
+        bvh->left = new BVH();
+        bvh->right = new BVH();
+        build_bvh(i0, indice_pivot, bvh->left);
+        build_bvh(indice_pivot, i1, bvh->right);
+    }
+
+    bool intersect(const Ray& r, int id, Vector &normale, double &t ) const {
 
         const Vector &A = vertices[faces[id*3]];
         const Vector &B = vertices[faces[id*3+1]];
@@ -141,10 +190,7 @@ public:
         double alpha = (uw*vv - vw*uv)/detM;
         double beta = (uu*vw-uv*uw)/detM;
 
-        if (alpha > 0 && beta > 0 && alpha + beta < 1) {
-            return true;
-        }
-        return false;
+        return (alpha > 0 && beta > 0 && alpha + beta < 1);
     }
 
     bool intersect(const Ray& r, Vector &P,  double &t, Vector &normale, Material& M) const {
@@ -156,7 +202,36 @@ public:
             return false;
         }
 
+        std::list<BVH*> l;
+        l.push_back(bvh);
 
+//        while(!l.empty()) {
+//            BVH* node = l.front();
+//            l.pop_front();
+
+//            if(node->left && node->left->bbox.intersect(r)) {
+//                l.push_back(node->left);
+//            }
+//            if(node->right && node->right->bbox.intersect(r)) {
+//                l.push_back(node->right);
+//            }
+
+//            if(!node->left && !node->right) {
+
+////                for (unsigned int i = node->i0; i <= node->i1; i++) {
+////                    Vector current_n;
+////                    double current_t;
+////                    if (intersect(r, i, current_n, current_t)) {
+////                        has_intersection = true;
+////                        if (current_t < t) {
+////                            t = current_t;
+////                            normale = current_n;
+////                        }
+////                    }
+////                }
+//            }
+
+//        }
         for (unsigned int i = 0; i < faces.size()/3; i++) {
             Vector current_n;
             double current_t;
@@ -168,6 +243,8 @@ public:
                 }
             }
         }
+
+
         P = r.C + t*r.u;
         M = material;
         return has_intersection;
@@ -183,6 +260,7 @@ public:
     std::vector<Vector> uvs; // Vector en 3D mais on n'utilise que 2 composantes
 
     BoundingBox bbox;
+    BVH *bvh;
 };
 
 #endif // GEOMETRY_H
