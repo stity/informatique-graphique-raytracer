@@ -9,7 +9,7 @@ Scene::Scene()
     objects =std::vector<Object*>();
 }
 
-bool Scene::intersect(const Ray& r, Vector& P, Vector& N, int& id, Material& M) {
+bool Scene::intersect(const Ray& r, Vector& P, Vector& N, int& id, Material& M) const {
     double mint = 1E9;
     bool result = false;
     for(unsigned int i = 0; i<objects.size(); i++) {
@@ -31,7 +31,7 @@ bool Scene::intersect(const Ray& r, Vector& P, Vector& N, int& id, Material& M) 
     return result;
 }
 
-Vector Scene::getColor(const Ray &ray, int recursion, int recursionMax) {
+Vector Scene::getColor(const Ray &ray, int recursion, int recursionMax) const {
     Vector N, P;
     int sphereId;
     Vector finalColor;

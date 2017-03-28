@@ -10,8 +10,8 @@ class Scene {
 public:
     Scene();
 
-    bool intersect(const Ray& r, Vector& P, Vector& N, int& id, Material &M);
-    Vector getColor(const Ray &ray, int recursion, int recursionMax);
+    bool intersect(const Ray& r, Vector& P, Vector& N, int& id, Material &M) const;
+    Vector getColor(const Ray &ray, int recursion, int recursionMax) const;
 
     std::vector<Object*> objects;
     Vector L;
